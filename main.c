@@ -3,7 +3,6 @@
 
 int charToAscii(char character);
 void asciiToHex(char* outputDestination, int stringSize, int ascii);
-int hexToAscii(char* hexadecimal);
 char asciiToChar(int ascii);
 
 
