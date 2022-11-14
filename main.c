@@ -51,8 +51,12 @@ int main (void) {
             outputPtr = fopen(newFileName, "w");
             fclose(outputPtr);
 
+            int y = 0;
+
             //read input file
+            printf("\n%s", fgets(buffer, 120, inputPtr));
             while(fgets(buffer, 120, inputPtr) != NULL){
+                printf("this is running!");
                 for (int j = 1; j<=strlen(buffer); j++){
 
                     //convert tab to TT
@@ -88,6 +92,7 @@ int main (void) {
                 fprintf(outputPtr, bufferString);
                 fprintf(outputPtr, "\n");
             }
+            printf("This did not run!");
         }
         
         //Decrypt Mode
@@ -142,6 +147,7 @@ int main (void) {
                 
                 //print bufferString (encrypted line) to file
                 fprintf(outputPtr, bufferString);
+                fprintf(outputPtr, "\n");
             }
         }
         
@@ -169,7 +175,7 @@ int charToAscii(char character){
 void asciiToHex(char* outputDestination, int stringSize, int ascii){
     int resultant = ascii;
     int tempResultant = ascii;
-    int divisnum;
+    int divisnum = 0;
 
     //# of times ascii can be divided by 16
     while (tempResultant != 0){
@@ -206,13 +212,13 @@ void asciiToHex(char* outputDestination, int stringSize, int ascii){
         }
     }
         //debugging statements to print values for divisnum and remainder values
-        #ifdef DEBUG
+        //#ifdef DEBUG
         printf("\n\nThe size of asciibuffer :%d\n", sizeof(asciiBuffer));
         for (int b = 0; b<=divisnum-1; b++){
             printf("\n\nremainder %d: %c\n", b, asciiBuffer[b]);
         }
         printf("\ndivisnum: %d\n", divisnum);
-        #endif
+        //#endif
 
     //copy const string from function to string declared outside of function
     strncpy(outputDestination, asciiBuffer, stringSize);
