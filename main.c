@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
-int charToAscii();
-int asciiToHex();
-int hexToAscii();
-int asciiToChar();
+int charToAscii(char character);
+void asciiToHex(char* outputDestination, int stringSize, int ascii);
+int hexToAscii(char* hexadecimal);
+char asciiToChar(int ascii);
 
 
 int main (void) {
@@ -32,13 +32,13 @@ int main (void) {
         if (option == 'E') {
             
             //grabs the base file name
-            char newFileName[100];
-            for (int i = 1; i<=strlen(file); i++){
+            char newFileName[strlen(file)];
+            for (int i = 0; i<=strlen(file)-1; i++){
                 if (file[i] == '.') {
                     strncpy(newFileName,file, i);
                     break;
                 }
-                else if (i == strlen(file)){
+                else if (i == strlen(file)-1){
                     strncpy(newFileName,file, i);
                     break;
                 }
@@ -55,38 +55,39 @@ int main (void) {
             //read input file
             while(fgets(buffer, 120, inputPtr) != NULL){
                 for (int j = 1; j<=strlen(buffer); j++){
-                    
-                    // open new file in read mode while converting buffer line
-                    outputPtr = fopen(newFileName, "r");
 
                     //convert tab to TT
-                    if (chartoAscii(buffer[j]) == 9) {
+                    if (charToAscii(buffer[j]) == 9) {
                         char tempString[] = "TT";
                         strcat(bufferString, tempString);
                     }
                     
                     //convert char to hexadecimal then append to bufferString
                     else {
-                        outChar = chartoAscii(buffer[j])-16;
+                        outChar = charToAscii(buffer[j])-16;
                         if (outChar <32) {
                             outChar = (outChar - 32) + 144;
-                            strcat(bufferString, AsciiToHex(outChar));
+                            char tempBuf[2];
+                            int numsize = 2;
+                            asciiToHex(tempBuf, numsize, outChar);
+                            strcat(bufferString, tempBuf);
                         }
 
                         else {
-                            strcat(bufferString, AsciiToHex(outChar));
+                            char tempBuf2[2];
+                            int numsize = 2;
+                            asciiToHex(tempBuf2, numsize, outChar);
+                            strcat(bufferString, tempBuf2);
                         }
                     }
-
-                    //close file after done converting buffer line
-                    fclose(newFileName);
                 }
 
                 //open file in append mode
                 outputPtr = fopen(newFileName, "a");
                 
                 //print bufferString (encrypted line) to file
-                fprintf(newFileName, bufferString);
+                fprintf(outputPtr, bufferString);
+                fprintf(outputPtr, "\n");
             }
         }
         
@@ -110,17 +111,116 @@ int main (void) {
             //appends file extension to base file name
             char fileExten[] = ".txt";
             strcat(newFileName, fileExten);
+            
+            //creates decrypted file location and closes it
             outputPtr = fopen(newFileName, "w");
+            fclose(outputPtr);
 
+            //read input file
+            while(fgets(buffer, 120, inputPtr) != NULL){
+                for (int j = 1; j<=strlen(buffer); j=j+2){
+
+                    //convert TT to tab
+                    if (buffer[j] == 'T' && buffer[j+1] == 'T') {
+                        char tempString[] = "\t"; //hopefully \t is the tab value
+                        strcat(bufferString, tempString);
+                    }
+                    
+                    //convert hexadecimal to char then append to bufferString
+                    else {
+                        outChar = (buffer[j]*16 + buffer[j+1]) + 16;
+                        if (outChar >127) {
+                            outChar = (outChar - 144) + 32;
+                        }
+                        char tempString[1];
+                        tempString[0] = outChar;
+                        strcat(bufferString, tempString);
+                    }
+                }
+
+                //open file in append mode
+                outputPtr = fopen(newFileName, "a");
+                
+                //print bufferString (encrypted line) to file
+                fprintf(outputPtr, bufferString);
+            }
         }
         
         //Invalid Input
         else {
             printf("Error: Invalid input");
         }
+    
     }
     
     fclose(inputPtr);
     fclose(outputPtr);
     return 0;
+}
+
+//conversion functions
+
+//char to ascii
+int charToAscii(char character){
+    int resultCharacter = character;
+    return resultCharacter;
+}
+
+//ascii to hex
+void asciiToHex(char* outputDestination, int stringSize, int ascii){
+    int resultant = ascii;
+    int tempResultant = ascii;
+    int divisnum;
+
+    //# of times ascii can be divided by 16
+    while (tempResultant != 0){
+        tempResultant = tempResultant / 16;
+        divisnum++;
+    }
+
+    //find hex numbers
+    char remainders[divisnum];
+    for (int k = 0; k <= divisnum-1; k++){
+        remainders[k] = resultant % 16;
+        resultant = resultant / 16;
+    }
+
+    //debugging statements to print values for divisnum and remainder values
+    #ifdef DEBUG
+        printf("\n\nThe size of remainder :%d\n", strlen(remainders));
+        for (int b = 0; b<=divisnum-1; b++){
+            printf("\n\nremainder %d: %d\n", b, remainders[b]);
+        }
+        printf("\ndivisnum: %d\n", divisnum);
+    #endif
+
+    //declare tempbuffer with size
+    char asciiBuffer[divisnum];
+
+    //order hex numbers in temp buffer string then append temp buffer to buffer
+    for (int l = divisnum-1, m = 0; l>=0; l--, m++){
+        if (remainders[l] <= 9){
+            asciiBuffer[m] = 48 + remainders[l];
+        }
+        else {
+            asciiBuffer[m] = 55 + remainders[l];
+        }
+    }
+        //debugging statements to print values for divisnum and remainder values
+        #ifdef DEBUG
+        printf("\n\nThe size of asciibuffer :%d\n", sizeof(asciiBuffer));
+        for (int b = 0; b<=divisnum-1; b++){
+            printf("\n\nremainder %d: %c\n", b, asciiBuffer[b]);
+        }
+        printf("\ndivisnum: %d\n", divisnum);
+        #endif
+
+    //copy const string from function to string declared outside of function
+    strncpy(outputDestination, asciiBuffer, stringSize);
+}
+
+
+char asciiToChar(int ascii){
+    char resultCharacter = ascii;
+    return resultCharacter;
 }
