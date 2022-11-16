@@ -1,2 +1,6 @@
+Hello There how are you?
+My name is Sean Clarke. I like software!
 This is a test
-I like cheese   jk
+I like cheese   jk   
+This encryption scheme is pretty weird.
+Isn't it?!? 
