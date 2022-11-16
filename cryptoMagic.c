@@ -59,7 +59,7 @@ int main (int argc, char* argv[]) {
 }
 
 void encrypt(char* file) {
-    char *newFileName = malloc(strlen(file) + 1);
+    char newFileName[strlen(file)];
     char buffer[121];
     FILE *f = fopen(file, "r");
     // process the new file name
@@ -115,7 +115,7 @@ void asciiToHex(char* input, char* output) {
 }
 
 void decrypt(char* file) {
-    char *newFileName = malloc(strlen(file) + 1);
+    char newFileName[strlen(file)];
     char buffer[121];
     FILE *f = fopen(file, "r");
     int i = 0;
@@ -172,4 +172,3 @@ void hexToAscii(char* input, char* output) {
     }
     output[j++] = '\0';
 }
-
