@@ -8,8 +8,6 @@ void asciiToHex(char* input, char* output);
 void hexToAscii(char* input, char* output);
 
 int main (int argc, char* argv[]) {
-    char *option;
-    char *file;
     FILE *inputPtr;
     // when nothing is passed through argument
     if(argc == 1) {
@@ -17,34 +15,27 @@ int main (int argc, char* argv[]) {
         exit(1);
     // when only 1 argument is passed, perform encrypt if valid file name is passed
     } else if(argc == 2) {
-        file = malloc(strlen(argv[1]) + 1);
-        strcpy(file, argv[1]);
-        inputPtr = fopen(file,"r");
+        inputPtr = fopen(argv[1],"r");
         if (inputPtr == NULL) {
             printf("\nError: Command or File does not exist\n");
             exit(1);
         } else {
-            encrypt(file);
+            encrypt(argv[1]);
         }
     // when both option and file name are passed
     } else if(argc == 3) {
-        file = malloc(strlen(argv[2]) + 1);
-        option = malloc(strlen(argv[1]) + 1);
-        strcpy(option, argv[1]);
-        strcpy(file, argv[2]);
-        inputPtr = fopen(file,"r");
+    
+        inputPtr = fopen(argv[2],"r");
         if (inputPtr == NULL) {
             printf("\nError: File does not exist\n");
             exit(1);
         } else {
-            char *opE = malloc(strlen(argv[1]) + 1);
-            char *opD = malloc(strlen(argv[1]) + 1);
-            opE = "-E";
-            opD = "-D";
-            if (strcmp(option, opE) == 0) {
-                encrypt(file);
-            } else if (strcmp(option, opD) == 0) {
-                decrypt(file);
+            char opE[3] = "-E";
+            char opD[3] = "-D";
+            if (strcmp(argv[1], opE) == 0) {
+                encrypt(argv[2]);
+            } else if (strcmp(argv[1], opD) == 0) {
+                decrypt(argv[2]);
             } else {
                 printf("\nError: Command does not exist\n");
                 exit(1);
@@ -80,7 +71,7 @@ void encrypt(char* file) {
     // convert the content of each line
     while(fgets(buffer, 120, f) != NULL) {
         buffer[strlen(buffer)] = '\0';
-        char *tempString = malloc((strlen(buffer) * 2) + 1);
+        char tempString[(strlen(buffer) * 2) + 1];
         asciiToHex(buffer, tempString);
         fputs(tempString, outputPtr);
         fputs("\n", outputPtr);
@@ -134,7 +125,7 @@ void decrypt(char* file) {
     FILE *outputPtr = fopen(newFileName, "w");
     while(fgets(buffer, 120, f) != NULL) {
         buffer[strlen(buffer)] = '\0';
-        char *tempString = malloc(strlen(buffer));
+        char tempString[strlen(buffer)];
         hexToAscii(buffer, tempString);
         fputs(tempString, outputPtr);
         fputs("\n", outputPtr);
