@@ -49,112 +49,61 @@ int main (void) {
            
             // create new file and close it
             outputPtr = fopen(newFileName, "w");
-            fclose(outputPtr);
+            //fclose(outputPtr);
+            
+            //open file in append mode
+              //  outputPtr = fopen(newFileName, "a");
 
             //read input file
             while(fgets(buffer, 120, inputPtr) != NULL){
                 printf("\nCYCLE\n");
-                for (int j = 1; j<=strlen(buffer); j++){
-
+                for (int j = 0; j<=strlen(buffer)-1; j++){
+                    printf("Origin Val: %c\n", buffer[j]);
                     //convert tab to TT
+                  /*  
                     if (charToAscii(buffer[j]) == 9) {
                         char tempString[] = "TT";
                         strcat(bufferString, tempString);
                     }
                     
                     //convert char to hexadecimal then append to bufferString
-                    else {
+                    */
                         outChar = charToAscii(buffer[j])-16;
                         if (outChar <32) {
                             outChar = (outChar - 32) + 144;
-                            char tempBuf[2];
-                            int numsize = 2;
-                            asciiToHex(tempBuf, numsize, outChar);
+                            char tempBuf[1];
+                            tempBuf[0] = asciiToChar(outChar);
+                            //int numsize = 2;
+                            //asciiToHex(tempBuf, numsize, outChar);
                             strcat(bufferString, tempBuf);
                             //printf("tempBuf: %s\n", tempBuf);
                         }
 
                         else {
-                            char tempBuf2[2];
-                            int numsize = 2;
-                            asciiToHex(tempBuf2, numsize, outChar);
-                            strcat(bufferString, tempBuf2);
+                            //int numsize = 2;
+                            char tempBuf2[1];
+                            tempBuf2[0] = asciiToChar(outChar);
+                            printf("temp [%d]: %c\n", j, tempBuf2[0]);
+                            //asciiToHex(tempBuf2, numsize, outChar);
+                            printf("value before append: %c\n", bufferString[j]);
+                            strncat(bufferString, tempBuf2, 1);
                             //printf("Tempbuf2: %s", tempBuf2);
+                            printf("bufstring [%d]: %c\n\n", j, bufferString[j]);
                         }
-                    }
                 }
                 printf("%s\n", bufferString);
-                
-
-                //open file in append mode
-                outputPtr = fopen(newFileName, "a");
+            
                 
                 //print bufferString (encrypted line) to file
                 fprintf(outputPtr, bufferString);
-                fprintf(outputPtr, "\n");
-            }
+                fprintf(outputPtr, "\n");  
+            
             printf("\nCYCLES OVER\n");
-        }
-        /*
-        //Decrypt Mode
-        else if (option == 'D'){
-            
-             //grabs the base file name
-            char newFileName[100];
-            for (int i = 1; i<=strlen(file); i++){
-                if (file[i] == '.') {
-                    strncpy(newFileName,file, i);
-                    break;
-                }
-                else if (i == strlen(file)){
-                    strncpy(newFileName,file, i);
-                    break;
-                }
-            }
-            
-            
-            //appends file extension to base file name
-            char fileExten[] = ".txt";
-            strcat(newFileName, fileExten);
-            
-            //creates decrypted file location and closes it
-            outputPtr = fopen(newFileName, "w");
-            fclose(outputPtr);
-
-            //read input file
-            while(fgets(buffer, 120, inputPtr) != NULL){
-                for (int j = 1; j<=strlen(buffer); j=j+2){
-
-                    //convert TT to tab
-                    if (buffer[j] == 'T' && buffer[j+1] == 'T') {
-                        char tempString[] = "\t"; //hopefully \t is the tab value
-                        strcat(bufferString, tempString);
-                    }
-                    
-                    //convert hexadecimal to char then append to bufferString
-                    else {
-                        outChar = (buffer[j]*16 + buffer[j+1]) + 16;
-                        if (outChar >127) {
-                            outChar = (outChar - 144) + 32;
-                        }
-                        char tempString[1];
-                        tempString[0] = outChar;
-                        strcat(bufferString, tempString);
-                    }
-                }
-                printf("%s", bufferString);
-
-                //open file in append mode
-                outputPtr = fopen(newFileName, "a");
                 
-                //print bufferString (encrypted line) to file
-                //for (int a = 0; a<=strlen(bufferString); a++){
-                    fprintf(outputPtr, bufferString);
-                //}
-                fprintf(outputPtr, "\n");
-            }
+            } 
+            fprintf(outputPtr, "\n");   
         }
-        */
+        
         //Invalid Input
         else {
             printf("Error: Invalid input");
@@ -194,14 +143,6 @@ void asciiToHex(char* outputDestination, int stringSize, int ascii){
         resultant = resultant / 16;
     }
 
-    //debugging statements to print values for divisnum and remainder values
-    #ifdef DEBUG
-        printf("\n\nThe size of remainder :%d\n", strlen(remainders));
-        for (int b = 0; b<=divisnum-1; b++){
-            printf("\n\nremainder %d: %d\n", b, remainders[b]);
-        }
-        printf("\ndivisnum: %d\n", divisnum);
-    #endif
 
     //declare tempbuffer with size
     char asciiBuffer[divisnum];
@@ -213,7 +154,7 @@ void asciiToHex(char* outputDestination, int stringSize, int ascii){
         }
         else {
             asciiBuffer[m] = 55 + remainders[l];
-        }c
+        }
     }
         //debugging statements to print values for divisnum and remainder values
         #ifdef DEBUG
@@ -235,4 +176,4 @@ void asciiToHex(char* outputDestination, int stringSize, int ascii){
 char asciiToChar(int ascii){
     char resultCharacter = ascii;
     return resultCharacter;
-}
+} 
