@@ -110,7 +110,7 @@ void asciiToHex(char* input, char* output) {
         }
         i+=1;
         j+=2;
-    }
+    }   
     output[j++] = '\0';
 }
 
